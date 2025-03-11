@@ -48,10 +48,10 @@ bool set_dataframe(dataframe_t *dataframe, char **file, const char *separator)
         (dataframe->nb_columns + 1));
     if (dataframe->column_names == NULL)
         return false;
+    for (int i = 0; i <= dataframe->nb_columns; i++)
+        dataframe->column_names[i] = NULL;
     return true;
 }
-
-#include "dataframe.h"
 
 static
 char *my_open_file(const char *filename)
@@ -76,6 +76,32 @@ char *my_open_file(const char *filename)
     }
     buff[file_stat.st_size] = '\0';
     return (close(fd), buff);
+}
+
+static
+void set_name_column(char *array, int index, int a, dataframe_t *dataframe)
+{
+    if (index == 0) {
+        dataframe->column_names[a] = strdup(array);
+    }
+}
+
+static
+bool set_names_columns(dataframe_t *dataframe, const char *separator,
+    char **file)
+{
+    char **array = NULL;
+    int a = 0;
+
+    for (int index = 0; file[index] != NULL; index++) {
+        array = my_str_to_word_array(file[index], separator);
+        if (!array)
+            return (my_free_array(file), false);
+        for (; array[a] != NULL; a++)
+            set_name_column(array[a], index, a, dataframe);
+        my_free_array(array);
+    }
+    return true;
 }
 
 static
@@ -109,5 +135,8 @@ dataframe_t *df_read_csv(const char *filename, const char *separator)
         my_free_array(file);
         return (free(dataframe), NULL);
     }
+    if (set_names_columns(dataframe, separator, file) == false)
+        return NULL;
+    my_free_array(file);
     return dataframe;
 }
