@@ -7,18 +7,11 @@
 
 MAKEFLAGS += -j
 
-BIN_NAME := mysh
-
-LIB_NAME := libu.a
+BIN_NAME := libcuddle.a
 
 SRC := $(wildcard src/*.c)
 
-LIB_SRC := $(wildcard ulib/*.c)
-LIB_SRC += $(wildcard ulib/write/printf/*.c)
-LIB_SRC += $(wildcard ulib/math/*.c)
-LIB_SRC += $(wildcard ulib/mem/*.c)
-LIB_SRC += $(wildcard ulib/str/*.c)
-LIB_SRC += $(wildcard ulib/write/*.c)
+TEST_SRC := $(wildcard tests/*.c)
 
 BUILD_DIR := .build
 
@@ -33,83 +26,49 @@ CFLAGS += -Wwrite-strings -Werror=declaration-after-statement
 CFLAGS += -Werror=format-nonliteral -Werror=int-conversion -Werror=return-type
 CFLAGS += -Werror=vla-larger-than=0 -Wno-discarded-qualifiers
 
-LDFLAGS += -L .
-LDLIBS := -lu
-
 include utils.mk
 
 .PHONY: _start all
 _start: all
 
-# call mk-profile release, SRC, additional CFLAGS
+# call mk-profile PROFILE_NAME, SRC, add CFLAGS, BIN_NAME, BUILD_TESTS_SRC
 define mk-profile
 
 NAME_$(strip $1) := $4
 OBJ_$(strip $1) := $$($(strip $2):%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
+COMPILE_TESTS := $5
 
-LIB_NAME_$(strip $1) := $(BUILD_DIR)/$(strip $1)/$(LIB_NAME)
-LIB_OBJ_$(strip $1) := $$(LIB_SRC:%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
+ifeq ($$(COMPILE_TESTS),1)
+	TEST_OBJ := $$($(TEST_SRC):%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
+endif
 
 $$(BUILD_DIR)/$(strip $1)/%.o: %.c
 	@ mkdir -p $$(dir $$@)
-	@ $$(CC) $$(CFLAGS) -o $$@ -c $$<
+	$$(CC) $$(CFLAGS) -o $$@ -c $$<
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 
-$$(LIB_NAME_$(strip $1)): $$(LIB_OBJ_$(strip $1))
-	@ ar rc $$@ $$(LIB_OBJ_$(strip $1))
+$(info $(TEST_OBJ))
+$$(NAME_$(strip $1)): $$(OBJ_$(strip $1))
+	@ ar rc $$@ $$(OBJ_$(strip $1))
+ifeq ($$(COMPILE_TESTS),1)
+	$$(CC) $$(CFLAGS) $$(TEST_OBJ) -L. -lcuddle_test -o test
+	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
+endif
 	@ $$(LOG_TIME) "$$(C_CYAN) AR $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
-
-$$(NAME_$(strip $1)): CFLAGS += -L $$(BUILD_DIR)/$(strip $1) $3
-$$(NAME_$(strip $1)): $$(LIB_NAME_$(strip $1)) $$(OBJ_$(strip $1))
-	@ $$(CC) $$(CFLAGS) $$(OBJ_$(strip $1)) $$(LDFLAGS) $$(LDLIBS) -o $$@
-	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 	@ $$(LOG_TIME) "$$(C_GREEN) OK  Compilation finished $$(C_RESET)"
-
 endef
 
-$(eval $(call mk-profile, release, SRC, , $(BIN_NAME)))
-$(eval $(call mk-profile, debug, SRC, -D U_DEBUG_MODE -g3, debug))
-$(eval $(call mk-profile, test, SRC, --coverage, test))
-$(eval $(call mk-profile, afl, SRC, -D AFL_MODE, afl_runner))
+$(eval $(call mk-profile, release, SRC, , $(BIN_NAME), 0))
+$(eval $(call mk-profile, debug, SRC, -D U_DEBUG_MODE -g3, libcuddle_debug.a,\
+	0))
+$(eval $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3, libcuddle_test.a,\
+	1))
+$(info $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3, libcuddle_test.a,\
+	1))
 
 all: $(NAME_release)
 
-.PHONY: tests_run
-tests_run: $(NAME_test)
-	- find fixtures -name "*.sh" | xargs -i \
-		sh -c 'cat {} | env -i PATH="$(dir $(shell which ls))" ./$^'
-
-.PHONY: cov
-cov: tests_run
-	gcovr . \
-		--gcov-ignore-errors=no_working_dir_found \
-		--exclude-unreachable-branches \
-		--exclude tests
-
-.PHONY: afl
-afl: CC := AFL_USE_ASAN=1 afl-gcc-fast
-afl: $(NAME_afl)
-
-define newline
-
-
-endef
-
-AFL_FLAGS := -i afl/inputs
-AFL_FLAGS += -x afl/tokens
-AFL_FLAGS += -o afl/generated
-
-PROCS ?= $(shell nproc)
-
-.PHONY: afl_run
-afl_run: afl
-	@ mkdir -p afl/generated
-	screen -dmS main_instance \
-		afl-fuzz $(AFL_FLAGS) -M fuzzer_1 -- ./afl_runner
-	$(foreach instance, $(shell seq 1 $(PROCS)),\
-		screen -dmS afl_$(instance) \
-		afl-fuzz $(AFL_FLAGS) -S fuzzer_$(instance) -- ./afl_runner$(newline))
-	watch -n 0.25 -- afl-whatsup -s afl/generated
+test: $(NAME_test)
 
 clean:
 	@ $(RM) $(OBJ)
