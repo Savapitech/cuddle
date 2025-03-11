@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "../src/dataframe.h"
+#include "../src/debug.h"
 
 int main(int ac, char **av)
 {
@@ -17,13 +18,10 @@ int main(int ac, char **av)
     if (dataframe == NULL)
         return 84;
     printf("nb_columns= %d\n", dataframe->nb_columns);
-    printf("nb_rows= %d\n", dataframe->nb_rows);
-    for (int a = 0; dataframe->column_names[a] != NULL; a++) {
-        if (a == 0)
-            printf("name colmuns= %s\n", dataframe->column_names[a]);
-        else
-            printf("              %s\n", dataframe->column_names[a]);
-    }
+    U_DEBUG("nb_rows= %d\n", dataframe->nb_rows);
+    printf("name colmuns= %s\n", dataframe->column_names[0]);
+    for (int a = 1; dataframe->column_names[a] != NULL; a++)
+        printf("              %s\n", dataframe->column_names[a]);
     my_free_array(dataframe->column_names);
     //free(dataframe->column_names);
     free(dataframe);

@@ -42,6 +42,7 @@ ifeq ($$(COMPILE_TESTS),1)
 OBJ_$(strip $1) += $$(TEST_SRC:%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
 endif
 
+$$(NAME_$(strip $1)): CFLAGS += $3
 $$(BUILD_DIR)/$(strip $1)/%.o: %.c
 	@ mkdir -p $$(dir $$@)
 	@ $$(CC) $$(CFLAGS) -o $$@ -c $$<
