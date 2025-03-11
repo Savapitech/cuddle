@@ -13,10 +13,8 @@
 mysh
 a.out
 libmy.a
-test
 signal
 mysh-*
-test*
 debug
 
 # Build
