@@ -39,45 +39,40 @@ OBJ_$(strip $1) := $$($(strip $2):%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
 COMPILE_TESTS := $5
 
 ifeq ($$(COMPILE_TESTS),1)
-	TEST_OBJ := $$($(TEST_SRC):%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
+OBJ_$(strip $1) += $$(TEST_SRC:%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
 endif
 
 $$(BUILD_DIR)/$(strip $1)/%.o: %.c
 	@ mkdir -p $$(dir $$@)
-	$$(CC) $$(CFLAGS) -o $$@ -c $$<
+	@ $$(CC) $$(CFLAGS) -o $$@ -c $$<
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 
-$(info $(TEST_OBJ))
 $$(NAME_$(strip $1)): $$(OBJ_$(strip $1))
-	@ ar rc $$@ $$(OBJ_$(strip $1))
 ifeq ($$(COMPILE_TESTS),1)
-	$$(CC) $$(CFLAGS) $$(TEST_OBJ) -L. -lcuddle_test -o test
+	@ $$(CC) $$(CFLAGS) $$(OBJ_$(strip $1)) -o $$@
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
-endif
+else
+	@ ar rc $$@ $$(OBJ_$(strip $1))
 	@ $$(LOG_TIME) "$$(C_CYAN) AR $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
+endif
 	@ $$(LOG_TIME) "$$(C_GREEN) OK  Compilation finished $$(C_RESET)"
 endef
 
 $(eval $(call mk-profile, release, SRC, , $(BIN_NAME), 0))
-$(eval $(call mk-profile, debug, SRC, -D U_DEBUG_MODE -g3, libcuddle_debug.a,\
+$(eval $(call mk-profile, debug, SRC, -D U_DEBUG_MODE -g3, libcuddle_debug.a, \
 	0))
-$(eval $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3, libcuddle_test.a,\
-	1))
-$(info $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3, libcuddle_test.a,\
-	1))
+$(eval $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3, test, 1))
 
 all: $(NAME_release)
-
-test: $(NAME_test)
 
 clean:
 	@ $(RM) $(OBJ)
 	@ $(LOG_TIME) "$(C_YELLOW) RM $(C_PURPLE) $(OBJ) $(C_RESET)"
 
 fclean:
-	@ $(RM) -r $(NAME_release) $(NAME_debug) $(BUILD_DIR)
+	@ $(RM) -r $(NAME_release) $(NAME_debug) $(NAME_test) $(BUILD_DIR)
 	@ $(LOG_TIME) "$(C_YELLOW) RM $(C_PURPLE) $(NAME_release) $(NAME_debug) \
-		$(C_RESET)"
+		$(NAME_test) $(C_RESET)"
 
 .NOTPARALLEL: re
 re:	fclean all
