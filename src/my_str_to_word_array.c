@@ -63,7 +63,7 @@ bool principal_function(const char *str, const char *separator, char **tab)
 {
     int nb_character = 0;
     int index = 0;
-    
+
     for (int i = 0; str[i] != '\0';) {
         i += get_nb_skip_character(separator, &str[i]);
         nb_character = get_nb_character(separator, &str[i]);

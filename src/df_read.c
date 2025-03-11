@@ -108,7 +108,6 @@ static
 char **open_file_csv(const char *filename)
 {
     char *file = my_open_file(filename);
-
     char **array = NULL;
 
     if (file == NULL)

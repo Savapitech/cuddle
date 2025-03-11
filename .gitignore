@@ -10,12 +10,12 @@
 .vscode
 
 # Bin
-mysh
 a.out
 libmy.a
 signal
-mysh-*
 debug
+test
+lib*.a
 
 # Build
 .build
