@@ -63,9 +63,12 @@ char **my_str_to_word_array(const char *str, const char *separator)
     int nb_element = get_nb_element(separator, str);
     int nb_character;
     int index = 0;
-    char **tab = malloc(sizeof(char *) * (nb_element + 1));
+    char **tab;
 
-    if (tab == NULL && nb_element > 0)
+    if (nb_element < 1)
+        return NULL;
+    tab = (char **)malloc(sizeof(char *) * (nb_element + 1));
+    if ((void *)tab == NULL)
         return NULL;
     for (int i = 0; str[i] != '\0';) {
         i += get_nb_skip_character(separator, &str[i]);
@@ -73,6 +76,8 @@ char **my_str_to_word_array(const char *str, const char *separator)
         if (nb_character == 0)
             break;
         tab[index] = malloc(nb_character + 1);
+        if (tab[index] == NULL)
+            return (free((void *)tab), NULL);
         strncpy(tab[index], &str[i], nb_character);
         tab[index][nb_character] = '\0';
         i += nb_character;
