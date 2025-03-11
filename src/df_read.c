@@ -6,12 +6,12 @@
 */
 
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 #include "dataframe.h"
 
@@ -21,7 +21,7 @@ int set_nb_columns(dataframe_t *dataframe, char **file, const char *separator)
     int index_columns = 0;
     char **array_file = my_str_to_word_array(file[index_columns], separator);
 
-    if (array_file == NULL)
+    if ((void *)array_file == NULL)
         return 84;
     dataframe->nb_columns = 0;
     for (; array_file[index_columns] != NULL; index_columns++);
@@ -44,9 +44,9 @@ bool set_dataframe(dataframe_t *dataframe, char **file, const char *separator)
 {
     dataframe->nb_columns = set_nb_columns(dataframe, file, separator);
     dataframe->nb_rows = set_nb_rows(dataframe, file);
-    dataframe->column_names = malloc(sizeof(char *) *
+    dataframe->column_names = (char **)malloc(sizeof(char *) *
         (dataframe->nb_columns + 1));
-    if (dataframe->column_names == NULL)
+    if ((void *)dataframe->column_names == NULL)
         return false;
     for (int i = 0; i <= dataframe->nb_columns; i++)
         dataframe->column_names[i] = NULL;
@@ -114,7 +114,7 @@ char **open_file_csv(const char *filename)
         return (WC(2, "ERROR: No such file or directory\n"), NULL);
     array = my_str_to_word_array(file, "\n");
     if (!array)
-        return NULL;
+        return (free((void *)file), NULL);
     free(file);
     return array;
 }
@@ -124,19 +124,19 @@ dataframe_t *df_read_csv(const char *filename, const char *separator)
     dataframe_t *dataframe = malloc(sizeof(dataframe_t));
     char **file = NULL;
 
-    if (!dataframe)
+    if (dataframe == NULL)
         return NULL;
     file = open_file_csv(filename);
-    if (!file)
-        return NULL;
-    if (!separator)
+    if ((void *)file == NULL)
+        return (free(dataframe), NULL);
+    if (separator == NULL)
         separator = ",";
     if (set_dataframe(dataframe, file, separator) == false) {
         my_free_array(file);
         return (free(dataframe), NULL);
     }
     if (set_names_columns(dataframe, separator, file) == false)
-        return NULL;
+        return (free(dataframe), NULL);
     my_free_array(file);
     return dataframe;
 }
