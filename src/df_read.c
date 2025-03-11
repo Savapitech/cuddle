@@ -79,27 +79,17 @@ char *my_open_file(const char *filename)
 }
 
 static
-void set_name_column(char *array, int index, int a, dataframe_t *dataframe)
-{
-    if (index == 0) {
-        dataframe->column_names[a] = strdup(array);
-    }
-}
-
-static
 bool set_names_columns(dataframe_t *dataframe, const char *separator,
     char **file)
 {
-    char **array = NULL;
     int a = 0;
 
-    for (int index = 0; file[index] != NULL; index++) {
-        array = my_str_to_word_array(file[index], separator);
-        if (array == NULL)
-            return (my_free_array(file), false);
-        for (; array[a] != NULL; a++)
-            set_name_column(array[a], index, a, dataframe);
-        my_free_array(array);
+    for (char *token = strtok(file[0], separator); token != NULL;
+        token = strtok(NULL, separator)) {
+        dataframe->column_names[a] = strdup(token);
+        if (dataframe->column_names[a] == NULL)
+            return false;
+        a++;
     }
     return true;
 }
