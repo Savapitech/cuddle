@@ -95,7 +95,7 @@ bool set_names_columns(dataframe_t *dataframe, const char *separator,
 
     for (int index = 0; file[index] != NULL; index++) {
         array = my_str_to_word_array(file[index], separator);
-        if (!array)
+        if (array == NULL)
             return (my_free_array(file), false);
         for (; array[a] != NULL; a++)
             set_name_column(array[a], index, a, dataframe);
@@ -108,12 +108,13 @@ static
 char **open_file_csv(const char *filename)
 {
     char *file = my_open_file(filename);
+
     char **array = NULL;
 
-    if (!file)
+    if (file == NULL)
         return (WC(2, "ERROR: No such file or directory\n"), NULL);
     array = my_str_to_word_array(file, "\n");
-    if (!array)
+    if (array == NULL)
         return (free((void *)file), NULL);
     free(file);
     return array;
