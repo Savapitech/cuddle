@@ -29,6 +29,8 @@ typedef struct dataframe_s {
 
 char **my_str_to_word_array(const char *str, const char *separator);
 void my_free_array(char **array);
+void free_data(void ***data, int nb_columns, int nb_rows);
+void *my_memdup(const char *mem, size_t bytes);
 
 dataframe_t *df_read_csv(const char *filename, const char *separator);
 
