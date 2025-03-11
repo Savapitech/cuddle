@@ -11,6 +11,45 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdbool.h>
+
+#include "dataframe.h"
+
+static
+int set_nb_columns(dataframe_t *dataframe, char **file, const char *separator)
+{
+    int index_columns = 0;
+    char **array_file = my_str_to_word_array(file[index_columns], separator);
+
+    if (array_file == NULL)
+        return 84;
+    dataframe->nb_columns = 0;
+    for (; array_file[index_columns] != NULL; index_columns++);
+    my_free_array(array_file);
+    return index_columns;
+}
+
+static
+int set_nb_rows(dataframe_t *dataframe, char **file)
+{
+    int index_rows = 0;
+
+    dataframe->nb_rows = 0;
+    for (; file[index_rows] != NULL; index_rows++);
+    return index_rows;
+}
+
+static
+bool set_dataframe(dataframe_t *dataframe, char **file, const char *separator)
+{
+    dataframe->nb_columns = set_nb_columns(dataframe, file, separator);
+    dataframe->nb_rows = set_nb_rows(dataframe, file);
+    dataframe->column_names = malloc(sizeof(char *) *
+        (dataframe->nb_columns + 1));
+    if (dataframe->column_names == NULL)
+        return false;
+    return true;
+}
 
 #include "dataframe.h"
 
@@ -27,18 +66,20 @@ char *my_open_file(const char *filename)
     if (fd == -1)
         return NULL;
     buff = malloc(sizeof(char) * (file_stat.st_size + 1));
-    if (buff == NULL)
+    if (buff == NULL) {
+        close(fd);
         return (WC(2, "Error in opening file\n"), NULL);
+    }
     if (read(fd, buff, file_stat.st_size) != file_stat.st_size) {
-        free(buff);
-        return (WC(2, "Error in reading file\n"), NULL);
+        close(fd);
+        return (free(buff), NULL);
     }
     buff[file_stat.st_size] = '\0';
     return (close(fd), buff);
 }
 
 static
-char **open_file_csv(char *filename)
+char **open_file_csv(const char *filename)
 {
     char *file = my_open_file(filename);
     char **array = NULL;
@@ -62,7 +103,11 @@ dataframe_t *df_read_csv(const char *filename, const char *separator)
     file = open_file_csv(filename);
     if (!file)
         return NULL;
-    for (int a = 0; file[a] != NULL; a++)
-        printf("%s\n", file[a]);
+    if (!separator)
+        separator = ",";
+    if (set_dataframe(dataframe, file, separator) == false) {
+        my_free_array(file);
+        return (free(dataframe), NULL);
+    }
     return dataframe;
 }
