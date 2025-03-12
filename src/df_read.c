@@ -86,14 +86,19 @@ bool set_names_columns(dataframe_t *dataframe, const char *separator,
     char **file)
 {
     int a = 0;
+    char *tmp = strdup(file[0]);
 
+    if (tmp == NULL)
+        return 84;
     for (char *token = strtok(file[0], separator); token != NULL;
         token = strtok(NULL, separator)) {
         dataframe->column_names[a] = strdup(token);
         if (dataframe->column_names[a] == NULL)
-            return false;
+            return (free(tmp), false);
         a++;
     }
+    strcpy(file[0], tmp);
+    free(tmp);
     return true;
 }
 
@@ -118,7 +123,7 @@ void free_data(void ***data, int nb_columns, int nb_rows)
         return;
     for (int i = 0; i < nb_columns; i++) {
         for (int j = 0; j < nb_rows; j++) {
-            free(data[i][j]);
+            free(data[j][i]);
         }
         free(data[i]);
     }
@@ -132,7 +137,7 @@ bool store_data(dataframe_t *dataframe, char **file, const char *separator)
     char *token = NULL;
 
     for (int index_rows = 0; index_rows < dataframe->nb_rows; index_rows++) {
-        line = strdup(file[index_rows]);
+        line = strdup(file[index_rows + 1]);
         if (line == NULL)
             return false;
         token = strtok(line, separator);
@@ -140,7 +145,7 @@ bool store_data(dataframe_t *dataframe, char **file, const char *separator)
             index_columns++) {
             if (token == NULL)
                 break;
-            dataframe->data[index_columns][index_rows] = strdup(token);
+            dataframe->data[index_rows][index_columns] = strdup(token);
             token = strtok(NULL, separator);
         }
         free(line);
@@ -150,22 +155,23 @@ bool store_data(dataframe_t *dataframe, char **file, const char *separator)
 
 bool data_storage(dataframe_t *dataframe, char **file, const char *separator)
 {
-    dataframe->data = malloc(sizeof(void *) * dataframe->nb_columns);
+    dataframe->data = malloc(sizeof(void *) * dataframe->nb_rows);
     if (dataframe->data == NULL)
         return false;
-    for (int index_columns = 0; index_columns < dataframe->nb_columns; index_columns++) {
-        dataframe->data[index_columns] = malloc(sizeof(void *) * dataframe->nb_rows);
-        if (dataframe->data[index_columns] == NULL) {
+    dataframe->nb_rows--;
+    for (int index_rows = 0; index_rows < dataframe->nb_rows; index_rows++) {
+        dataframe->data[index_rows] = malloc(sizeof(void *) * dataframe->
+            nb_columns);
+        if (dataframe->data[index_rows] == NULL) {
             my_free_array((char **)dataframe->data);
             free(dataframe->data);
             return false;
         }
-        dataframe->data[index_columns][0] = '\0';
+        dataframe->data[index_rows][0] = NULL;
     }
     store_data(dataframe, file, separator);
     return true;
 }
-
 
 dataframe_t *df_read_csv(const char *filename, const char *separator)
 {
