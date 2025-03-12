@@ -6,9 +6,10 @@
 */
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 
-void *my_memdup(const char *mem, size_t bytes)
+void *my_memdup(const uint8_t *mem, size_t bytes)
 {
     char *result = NULL;
 

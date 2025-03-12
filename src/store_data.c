@@ -5,26 +5,28 @@
 ** store_data
 */
 
-#include "dataframe.h"
+#include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <string.h>
-#include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "dataframe.h"
 
 static
 void check_is_string_or_bool(dataframe_t *dataframe, int index_rows, int
     index_columns, char *token)
 {
-    if (strcmp(token, "true") == 0 || strcmp(token, "true") == 0) {
+    if (strcmp(token, "true") == 0 || strcmp(token, "false") == 0) {
         dataframe->column_type[index_columns] = BOOL;
         dataframe->data[index_rows][index_columns] =
-            my_memdup(token, sizeof(bool));
+            my_memdup((uint8_t const *)token, sizeof(bool));
     } else {
         dataframe->column_type[index_columns] = STRING;
         dataframe->data[index_rows][index_columns] =
-            my_memdup(token, strlen(token));
+            my_memdup((uint8_t const *)token, strlen(token));
     }
 }
 
@@ -33,6 +35,7 @@ void check_is_int_ot_uint(dataframe_t *dataframe, int index_rows, int
     index_columns, char *token)
 {
     int check_point = 0;
+    union { int nb; uint32_t u_nb; float f_nb; } value;
 
     for (int a = 0; token[a] != '\0'; a++) {
         if (token[a] == '.')
@@ -41,13 +44,15 @@ void check_is_int_ot_uint(dataframe_t *dataframe, int index_rows, int
             return;
     }
     if (check_point == 1) {
-        dataframe->column_type[index_columns] = INT;
-        dataframe->data[index_rows][index_columns] =
-            my_memdup(token, sizeof(int));
-    } else {
+        value.f_nb = atof(token);
         dataframe->column_type[index_columns] = FLOAT;
         dataframe->data[index_rows][index_columns] =
-            my_memdup(token, sizeof(float));
+            my_memdup((uint8_t const *)&value.f_nb, sizeof(float));
+    } else {
+        value.nb = atoi(token);
+        dataframe->column_type[index_columns] = INT;
+        dataframe->data[index_rows][index_columns] =
+            my_memdup((uint8_t const *)&value.nb, sizeof(int));
     }
 }
 
