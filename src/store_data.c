@@ -16,22 +16,21 @@
 #include "dataframe.h"
 
 static
-void check_is_string_or_bool(dataframe_t *dataframe, int index_rows, int
+void check_is_string_or_bool(dataframe_t *df, int index_rows, int
     index_columns, char *token)
 {
     if (strcmp(token, "true") == 0 || strcmp(token, "false") == 0) {
-        dataframe->column_type[index_columns] = BOOL;
-        dataframe->data[index_rows][index_columns] =
+        df->column_type[index_columns] = BOOL;
+        df->data[index_rows][index_columns] =
             my_memdup((uint8_t const *)token, sizeof(bool));
     } else {
-        dataframe->column_type[index_columns] = STRING;
-        dataframe->data[index_rows][index_columns] =
-            my_memdup((uint8_t const *)token, strlen(token));
+        df->column_type[index_columns] = STRING;
+        df->data[index_rows][index_columns] = strdup(token);
     }
 }
 
 static
-void check_is_int_ot_uint(dataframe_t *dataframe, int index_rows, int
+void check_is_int_ot_uint(dataframe_t *df, int index_rows, int
     index_columns, char *token)
 {
     int check_point = 0;
@@ -45,19 +44,19 @@ void check_is_int_ot_uint(dataframe_t *dataframe, int index_rows, int
     }
     if (check_point == 1) {
         value.f_nb = atof(token);
-        dataframe->column_type[index_columns] = FLOAT;
-        dataframe->data[index_rows][index_columns] =
+        df->column_type[index_columns] = FLOAT;
+        df->data[index_rows][index_columns] =
             my_memdup((uint8_t const *)&value.f_nb, sizeof(float));
     } else {
         value.nb = atoi(token);
-        dataframe->column_type[index_columns] = INT;
-        dataframe->data[index_rows][index_columns] =
+        df->column_type[index_columns] = INT;
+        df->data[index_rows][index_columns] =
             my_memdup((uint8_t const *)&value.nb, sizeof(int));
     }
 }
 
 static
-void check_type(dataframe_t *dataframe, int index_rows, int
+void check_type(dataframe_t *df, int index_rows, int
     index_columns, char *token)
 {
     bool is_nb = false;
@@ -69,40 +68,40 @@ void check_type(dataframe_t *dataframe, int index_rows, int
             is_nb = true;
     }
     if (is_nb)
-        check_is_int_ot_uint(dataframe, index_rows, index_columns, token);
+        check_is_int_ot_uint(df, index_rows, index_columns, token);
     else
-        check_is_string_or_bool(dataframe, index_rows, index_columns, token);
+        check_is_string_or_bool(df, index_rows, index_columns, token);
 }
 
 static
-bool store_data_second_part(dataframe_t *dataframe, const char *separator,
+bool store_data_second_part(dataframe_t *df, const char *separator,
     char *token, int index_rows)
 {
-    for (int index_columns = 0; index_columns < dataframe->nb_columns;
+    for (int index_columns = 0; index_columns < df->nb_columns;
         index_columns++) {
         if (token == NULL)
             break;
         token[strcspn(token, " \t\n\r")] = '\0';
-        check_type(dataframe, index_rows, index_columns, token);
-        if (dataframe->data[index_rows][index_columns] == NULL)
-            return (free(dataframe->data[index_rows][index_columns]), false);
+        check_type(df, index_rows, index_columns, token);
+        if (df->data[index_rows][index_columns] == NULL)
+            return (free(df->data[index_rows][index_columns]), false);
         token = strtok(NULL, separator);
     }
     return true;
 }
 
 static
-bool store_data(dataframe_t *dataframe, char **file, const char *separator)
+bool store_data(dataframe_t *df, char **file, const char *separator)
 {
     char *line = NULL;
     char *token = NULL;
 
-    for (int index_rows = 0; index_rows < dataframe->nb_rows; index_rows++) {
+    for (int index_rows = 0; index_rows < df->nb_rows; index_rows++) {
         line = strdup(file[index_rows + 1]);
         if (line == NULL)
             return false;
         token = strtok(line, separator);
-        if (store_data_second_part(dataframe, separator, token, index_rows) ==
+        if (store_data_second_part(df, separator, token, index_rows) ==
             false)
             return (free(line), false);
         free(line);
@@ -110,22 +109,24 @@ bool store_data(dataframe_t *dataframe, char **file, const char *separator)
     return true;
 }
 
-bool data_storage(dataframe_t *dataframe, char **file, const char *separator)
+bool data_storage(dataframe_t *df, char **file, const char *separator)
 {
-    dataframe->data = malloc(sizeof(void *) * dataframe->nb_rows);
-    if (dataframe->data == NULL)
+    df->data = (void ***)malloc(sizeof(void *) * df->nb_rows);
+    if ((void *)df->data == NULL)
         return false;
-    dataframe->nb_rows--;
-    for (int index_rows = 0; index_rows < dataframe->nb_rows; index_rows++) {
-        dataframe->data[index_rows] = malloc(sizeof(void *) * dataframe->
+    df->column_type = malloc(sizeof *df->column_type * df->nb_columns);
+    if (df->column_type == NULL)
+        return (free((void *)df->data), false);
+    df->nb_rows--;
+    for (int index_rows = 0; index_rows < df->nb_rows; index_rows++) {
+        df->data[index_rows] = (void **)malloc(sizeof(void *) * df->
             nb_columns);
-        if (dataframe->data[index_rows] == NULL) {
-            my_free_array((char **)dataframe->data);
-            free(dataframe->data);
-            return false;
+        if ((void *)df->data[index_rows] == NULL) {
+            my_free_array((char **)df->data);
+            return (free((void *)df->data), false);
         }
-        dataframe->data[index_rows][0] = NULL;
+        df->data[index_rows][0] = NULL;
     }
-    store_data(dataframe, file, separator);
+    store_data(df, file, separator);
     return true;
 }
