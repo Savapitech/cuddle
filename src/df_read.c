@@ -17,7 +17,7 @@
 #include "debug.h"
 
 static
-int set_nb_columns(dataframe_t *dataframe, char **file, const char *separator)
+int get_nb_columns(dataframe_t *dataframe, char **file, const char *separator)
 {
     int index_columns = 0;
     char *tmp = strdup(file[0]);
@@ -33,7 +33,7 @@ int set_nb_columns(dataframe_t *dataframe, char **file, const char *separator)
 }
 
 static
-int set_nb_rows(dataframe_t *dataframe, char **file)
+int get_nb_rows(dataframe_t *dataframe, char **file)
 {
     int index_rows = 0;
 
@@ -45,8 +45,8 @@ int set_nb_rows(dataframe_t *dataframe, char **file)
 static
 bool set_dataframe(dataframe_t *dataframe, char **file, const char *separator)
 {
-    dataframe->nb_columns = set_nb_columns(dataframe, file, separator);
-    dataframe->nb_rows = set_nb_rows(dataframe, file);
+    dataframe->nb_columns = get_nb_columns(dataframe, file, separator);
+    dataframe->nb_rows = get_nb_rows(dataframe, file);
     dataframe->column_names = (char **)malloc(sizeof(char *) *
         (dataframe->nb_columns + 1));
     if ((void *)dataframe->column_names == NULL)
@@ -128,49 +128,6 @@ void free_data(void ***data, int nb_columns, int nb_rows)
         free(data[i]);
     }
     free(data);
-}
-
-static
-bool store_data(dataframe_t *dataframe, char **file, const char *separator)
-{
-    char *line = NULL;
-    char *token = NULL;
-
-    for (int index_rows = 0; index_rows < dataframe->nb_rows; index_rows++) {
-        line = strdup(file[index_rows + 1]);
-        if (line == NULL)
-            return false;
-        token = strtok(line, separator);
-        for (int index_columns = 0; index_columns < dataframe->nb_columns;
-            index_columns++) {
-            if (token == NULL)
-                break;
-            dataframe->data[index_rows][index_columns] = strdup(token);
-            token = strtok(NULL, separator);
-        }
-        free(line);
-    }
-    return true;
-}
-
-bool data_storage(dataframe_t *dataframe, char **file, const char *separator)
-{
-    dataframe->data = malloc(sizeof(void *) * dataframe->nb_rows);
-    if (dataframe->data == NULL)
-        return false;
-    dataframe->nb_rows--;
-    for (int index_rows = 0; index_rows < dataframe->nb_rows; index_rows++) {
-        dataframe->data[index_rows] = malloc(sizeof(void *) * dataframe->
-            nb_columns);
-        if (dataframe->data[index_rows] == NULL) {
-            my_free_array((char **)dataframe->data);
-            free(dataframe->data);
-            return false;
-        }
-        dataframe->data[index_rows][0] = NULL;
-    }
-    store_data(dataframe, file, separator);
-    return true;
 }
 
 dataframe_t *df_read_csv(const char *filename, const char *separator)
