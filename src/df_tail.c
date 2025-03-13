@@ -24,11 +24,12 @@ dataframe_t *df_tail(dataframe_t *dataframe, int nb_rows)
     new_dataframe->nb_columns = dataframe->nb_columns;
     new_dataframe->nb_rows = nb_rows;
     dataframe->data += (dataframe->nb_rows - nb_rows);
-    if (!copy_columns_type(new_dataframe, dataframe))
+    if (!copy_columns_type(new_dataframe, dataframe) ||
+        !copy_columns_name(new_dataframe, dataframe) ||
+        !copy_data(new_dataframe, dataframe, nb_rows))
         return (free(new_dataframe), NULL);
-    if (!copy_columns_name(new_dataframe, dataframe))
-        return (free(new_dataframe), NULL);
-    if (!copy_data(new_dataframe, dataframe, nb_rows))
+    new_dataframe->separator = strdup(dataframe->separator);
+    if (new_dataframe->separator == NULL)
         return (free(new_dataframe), NULL);
     dataframe = cpy_src_df;
     return new_dataframe;

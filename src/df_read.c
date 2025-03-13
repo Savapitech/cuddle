@@ -147,10 +147,11 @@ dataframe_t *df_read_csv(const char *filename, const char *separator)
         return (free(dataframe), NULL);
     if (separator == NULL)
         separator = ",";
-    if (set_dataframe(dataframe, file, separator) == false) {
-        my_free_array(file);
+    dataframe->separator = strdup(separator);
+    if (dataframe->separator == NULL)
         return (free(dataframe), NULL);
-    }
+    if (set_dataframe(dataframe, file, separator) == false)
+        return (free(dataframe), NULL);
     if (set_names_columns(dataframe, separator, file) == false)
         return (free(dataframe), NULL);
     data_storage(dataframe, file, separator);
