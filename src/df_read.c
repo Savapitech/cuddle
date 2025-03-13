@@ -17,7 +17,7 @@
 #include "debug.h"
 
 static
-int get_nb_columns(dataframe_t *dataframe, char **file, const char *separator)
+int get_nb_columns(char **file, const char *separator)
 {
     int index_columns = 0;
     char *tmp = strdup(file[0]);
@@ -45,7 +45,7 @@ int get_nb_rows(dataframe_t *dataframe, char **file)
 static
 bool set_dataframe(dataframe_t *dataframe, char **file, const char *separator)
 {
-    dataframe->nb_columns = get_nb_columns(dataframe, file, separator);
+    dataframe->nb_columns = get_nb_columns(file, separator);
     dataframe->nb_rows = get_nb_rows(dataframe, file);
     dataframe->column_names = (char **)malloc(sizeof(char *) *
         (dataframe->nb_columns + 1));
@@ -116,7 +116,7 @@ char **open_file_csv(const char *filename)
     if (file == NULL)
         return (WC(2, "ERROR: No such file or directory\n"), NULL);
     array = my_str_to_word_array(file, "\n");
-    if (array == NULL)
+    if ((void *)array == NULL)
         return (free((void *)file), NULL);
     free(file);
     return array;
@@ -124,15 +124,15 @@ char **open_file_csv(const char *filename)
 
 void free_data(void ***data, int nb_columns, int nb_rows)
 {
-    if (data == NULL)
+    if ((void *)data == NULL)
         return;
     for (int i = 0; i < nb_columns; i++) {
         for (int j = 0; j < nb_rows; j++) {
             free(data[j][i]);
         }
-        free(data[i]);
+        free((void *)data[i]);
     }
-    free(data);
+    free((void *)data);
 }
 
 dataframe_t *df_read_csv(const char *filename, const char *separator)

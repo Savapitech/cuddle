@@ -25,6 +25,9 @@ void print_df(int rows, int col, void ***data, column_type_t type)
         case UINT:
             printf("[%d] ", *(uint32_t *)data[rows][col]);
             break;
+        case BOOL:
+            printf("[%b] ", *(bool *)data[rows][col]);
+            break;
         case FLOAT:
             printf("[%f] ", *(float *)data[rows][col]);
             break;

@@ -19,10 +19,13 @@ static
 void check_is_string_or_bool(dataframe_t *df, int index_rows, int
     index_columns, char *token)
 {
-    if (strcmp(token, "true") == 0 || strcmp(token, "false") == 0) {
+    bool vl;
+
+    if (strcasecmp(token, "true") == 0 || strcasecmp(token, "false") == 0) {
+        vl = tolower(token[0]) == 't' ? 1 : 0;
         df->column_type[index_columns] = BOOL;
         df->data[index_rows][index_columns] =
-            my_memdup((uint8_t const *)token, sizeof(bool));
+            my_memdup((uint8_t const *)&vl, sizeof(bool));
     } else {
         df->column_type[index_columns] = STRING;
         df->data[index_rows][index_columns] = strdup(token);
