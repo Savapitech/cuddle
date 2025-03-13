@@ -26,7 +26,7 @@ dataframe_t *df_head(dataframe_t *df, int nb_rows)
         !copy_data(new_df, df, nb_rows))
         return (free(new_df), NULL);
     new_df->separator = strdup(df->separator);
-    if (new_df == NULL)
+    if (new_df->separator == NULL)
         return (free(new_df), NULL);
     return new_df;
 }
