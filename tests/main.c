@@ -51,7 +51,9 @@ int main(int ac, char **av)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
+    df_info(df);
     df_describe(df);
+    df_write_csv(df, "result.csv");
     free(df);
     return 0;
 }

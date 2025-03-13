@@ -137,24 +137,24 @@ void free_data(void ***data, int nb_columns, int nb_rows)
 
 dataframe_t *df_read_csv(const char *filename, const char *separator)
 {
-    dataframe_t *dataframe = malloc(sizeof(dataframe_t));
+    dataframe_t *df = malloc(sizeof(dataframe_t));
     char **file = NULL;
 
-    if (dataframe == NULL)
+    if (df == NULL)
         return NULL;
     file = open_file_csv(filename);
     if ((void *)file == NULL)
-        return (free(dataframe), NULL);
+        return (free(df), NULL);
     if (separator == NULL)
         separator = ",";
-    dataframe->separator = strdup(separator);
-    if (dataframe->separator == NULL)
-        return (free(dataframe), NULL);
-    if (set_dataframe(dataframe, file, separator) == false)
-        return (free(dataframe), NULL);
-    if (set_names_columns(dataframe, separator, file) == false)
-        return (free(dataframe), NULL);
-    data_storage(dataframe, file, separator);
+    df->separator = strdup(separator);
+    if (df->separator == NULL)
+        return (free(df), NULL);
+    if (set_dataframe(df, file, separator) == false)
+        return ((free(df->separator), free(df)), NULL);
+    if (set_names_columns(df, separator, file) == false)
+        return ((free(df->separator), free(df)), NULL);
+    data_storage(df, file, separator);
     my_free_array(file);
-    return dataframe;
+    return df;
 }
