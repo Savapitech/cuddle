@@ -10,9 +10,9 @@
 #include "dataframe.h"
 
 const types_t TYPES[] = {
-    { "BOOL", sizeof(bool) },
-    { "INT", sizeof(int) },
-    { "UINT", sizeof(uint32_t) },
-    { "FLOAT", sizeof(float) },
-    { "STRING", 0 }
+    { "bool", sizeof(bool) },
+    { "int", sizeof(int) },
+    { "uint", sizeof(uint32_t) },
+    { "float", sizeof(float) },
+    { "string", 0 }
 };
