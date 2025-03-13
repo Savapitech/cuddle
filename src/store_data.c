@@ -62,14 +62,11 @@ static
 void check_type(dataframe_t *df, int index_rows, int
     index_columns, char *token)
 {
-    bool is_nb = false;
+    bool is_nb = true;
 
-    for (int a = 0; token[a] != '\0'; a++) {
+    for (int a = 0; token[a] != '\0'; a++)
         if (!isdigit(token[a]) && token[a] != '.' && token[0] != '-')
             is_nb = false;
-        else
-            is_nb = true;
-    }
     if (is_nb)
         check_is_int_ot_uint(df, index_rows, index_columns, token);
     else
