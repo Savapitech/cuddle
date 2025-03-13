@@ -12,6 +12,11 @@
 #include "../src/dataframe.h"
 #include "../src/debug.h"
 
+bool sort_func(void *value1, void *value2)
+{
+    return *(int *) value1 > *(int *)value2;
+}
+
 static
 void print_df(int rows, int col, void ***data, column_type_t type)
 {
@@ -42,6 +47,7 @@ int main(int ac, char **av)
 
     if (df == NULL)
         return 84;
+    df = df_sort(df, "\"Game Length\"", sort_func);
     U_DEBUG("nb_columns= %d\n", df->nb_columns);
     U_DEBUG("nb_rows= %d\n", df->nb_rows);
     U_DEBUG_MSG("columns: ");
