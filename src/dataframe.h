@@ -29,6 +29,11 @@ typedef struct {
     size_t sz;
 } types_t;
 
+typedef struct dataframe_shape_s {
+    int nb_rows;
+    int nb_columns;
+} dataframe_shape_t;
+
 typedef struct dataframe_s {
     int nb_rows;
     int nb_columns;
