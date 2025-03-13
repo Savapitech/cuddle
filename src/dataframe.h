@@ -43,6 +43,7 @@ extern const types_t TYPES[];
 // Core
 dataframe_t *df_read_csv(const char *filename, const char *separator);
 dataframe_t *df_head(dataframe_t *df, int nb_rows);
+dataframe_t *df_tail(dataframe_t *dataframe, int nb_rows);
 
 // Utils (will me moved to another header)
 char **my_str_to_word_array(const char *str, const char *separator);
