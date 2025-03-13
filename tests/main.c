@@ -23,7 +23,7 @@ void print_df(int rows, int col, void ***data, column_type_t type)
             printf("[%d] ", *(int *)data[rows][col]);
             break;
         case UINT:
-            printf("[%du] ", *(uint32_t *)data[rows][col]);
+            printf("[%d] ", *(uint32_t *)data[rows][col]);
             break;
         case FLOAT:
             printf("[%f] ", *(float *)data[rows][col]);
@@ -35,8 +35,7 @@ void print_df(int rows, int col, void ***data, column_type_t type)
 
 int main(int ac, char **av)
 {
-    dataframe_t *src = df_read_csv(av[1], ",");
-    dataframe_t *df = df_head(src, 4);
+    dataframe_t *df = df_read_csv(av[1], ",");
 
     if (df == NULL)
         return 84;
@@ -52,6 +51,7 @@ int main(int ac, char **av)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
+    df_describe(df);
     free(df);
     return 0;
 }

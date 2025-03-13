@@ -22,11 +22,8 @@ dataframe_t *df_head(dataframe_t *df, int nb_rows)
         return NULL;
     new_df->nb_columns = df->nb_columns;
     new_df->nb_rows = nb_rows;
-    if (!copy_columns_type(new_df, df))
-        return (free(new_df), NULL);
-    if (!copy_columns_name(new_df, df))
-        return (free(new_df), NULL);
-    if (!copy_data(new_df, df, nb_rows))
+    if (!copy_columns_type(new_df, df) || !copy_columns_name(new_df, df) ||
+        !copy_data(new_df, df, nb_rows))
         return (free(new_df), NULL);
     return new_df;
 }

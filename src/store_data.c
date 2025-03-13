@@ -43,15 +43,15 @@ void check_is_int_ot_uint(dataframe_t *df, int index_rows, int
             return;
     }
     if (check_point == 1) {
-        value.f_nb = atof(token);
+        value.f_nb = strtof(token, NULL);
         df->column_type[index_columns] = FLOAT;
         df->data[index_rows][index_columns] =
             my_memdup((uint8_t const *)&value.f_nb, sizeof(float));
     } else {
-        value.nb = atoi(token);
-        df->column_type[index_columns] = INT;
+        value.nb = strtoul(token, NULL, 10);
+        df->column_type[index_columns] = UINT;
         df->data[index_rows][index_columns] =
-            my_memdup((uint8_t const *)&value.nb, sizeof(int));
+            my_memdup((uint8_t const *)&value.nb, sizeof(uint32_t));
     }
 }
 
