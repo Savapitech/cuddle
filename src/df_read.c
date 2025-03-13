@@ -53,11 +53,6 @@ bool set_dataframe(dataframe_t *dataframe, char **file, const char *separator)
         return false;
     for (int i = 0; i <= dataframe->nb_columns; i++)
         dataframe->column_names[i] = NULL;
-    dataframe->column_type = malloc(sizeof(char) * dataframe->nb_columns);
-    if (dataframe->column_type == NULL) {
-        my_free_array(dataframe->column_names);
-        return false;
-    }
     return true;
 }
 
