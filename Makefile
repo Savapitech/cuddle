@@ -24,7 +24,7 @@ CFLAGS += -Wduplicated-cond -Wformat=2 -Wshadow -fno-builtin
 CFLAGS += -Wstrict-aliasing=0 -Wstrict-prototypes -Wunreachable-code
 CFLAGS += -Wwrite-strings -Werror=declaration-after-statement
 CFLAGS += -Werror=format-nonliteral -Werror=int-conversion -Werror=return-type
-CFLAGS += -Werror=vla-larger-than=0 -Wno-discarded-qualifiers -lm
+CFLAGS += -Werror=vla-larger-than=0 -Wno-discarded-qualifiers
 
 include utils.mk
 
@@ -45,12 +45,12 @@ endif
 $$(NAME_$(strip $1)): CFLAGS += $3
 $$(BUILD_DIR)/$(strip $1)/%.o: %.c
 	@ mkdir -p $$(dir $$@)
-	@ $$(CC) $$(CFLAGS) -o $$@ -c $$<
+	@ $$(CC) $$(CFLAGS) -o $$@ -c $$< -lm
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 
 $$(NAME_$(strip $1)): $$(OBJ_$(strip $1))
 ifeq ($$(COMPILE_TESTS),1)
-	@ $$(CC) $$(CFLAGS) $$(OBJ_$(strip $1)) -o $$@
+	@ $$(CC) $$(CFLAGS) $$(OBJ_$(strip $1)) -lm -o $$@
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 else
 	@ ar rc $$@ $$(OBJ_$(strip $1))

@@ -21,6 +21,7 @@ static
 void print_df(int rows, int col, void ***data, column_type_t type)
 {
     switch (type) {
+        case BOOL:
         case STRING:
             printf("[%s] ", (char *)data[rows][col]);
             break;
@@ -29,9 +30,6 @@ void print_df(int rows, int col, void ***data, column_type_t type)
             break;
         case UINT:
             printf("[%d] ", *(uint32_t *)data[rows][col]);
-            break;
-        case BOOL:
-            printf("[%b] ", *(bool *)data[rows][col]);
             break;
         case FLOAT:
             printf("[%f] ", *(float *)data[rows][col]);
@@ -47,7 +45,6 @@ int main(int ac, char **av)
 
     if (df == NULL)
         return 84;
-    df = df_sort(df, "\"Game Length\"", sort_func);
     U_DEBUG("nb_columns= %d\n", df->nb_columns);
     U_DEBUG("nb_rows= %d\n", df->nb_rows);
     U_DEBUG_MSG("columns: ");
@@ -60,8 +57,6 @@ int main(int ac, char **av)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
-    df_info(df);
-    df_describe(df);
     df_write_csv(df, "result.csv");
     free(df);
     return 0;

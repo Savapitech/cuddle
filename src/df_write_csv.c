@@ -25,8 +25,6 @@ void write_value(void *vl, FILE *file, column_type_t type)
             fprintf(file, "%.2f", *(float *)vl);
             break;
         case BOOL:
-            fprintf(file, "%s", *(bool *)vl == 1 ? "true" : "false");
-            break;
         case STRING:
             fprintf(file, "%s", (char *)vl);
             break;
