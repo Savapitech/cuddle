@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/dataframe.h"
-#include "../src/debug.h"
+#include "dataframe.h"
+#include "debug.h"
 
 bool sort_func(void *value1, void *value2)
 {

@@ -24,7 +24,7 @@ CFLAGS += -Wduplicated-cond -Wformat=2 -Wshadow -fno-builtin
 CFLAGS += -Wstrict-aliasing=0 -Wstrict-prototypes -Wunreachable-code
 CFLAGS += -Wwrite-strings -Werror=declaration-after-statement
 CFLAGS += -Werror=format-nonliteral -Werror=int-conversion -Werror=return-type
-CFLAGS += -Werror=vla-larger-than=0 -Wno-discarded-qualifiers
+CFLAGS += -Werror=vla-larger-than=0 -Wno-discarded-qualifiers -I include
 
 include utils.mk
 
