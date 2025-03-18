@@ -10,6 +10,7 @@
     #include <stdbool.h>
     #include <stddef.h>
     #include <stdint.h>
+    #include <stdio.h>
 
     #define WC(fd, str) write(fd, str, sizeof str - 1)
     #define IDX_OF(array, i, mem_s) (array + ((i) * (mem_s)))
