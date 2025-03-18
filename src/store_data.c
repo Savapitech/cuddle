@@ -75,7 +75,7 @@ bool store_data_second_part(dataframe_t *df, const char *separator,
         index_columns++) {
         if (token == NULL)
             break;
-        token[strcspn(token, " \t\n\r")] = '\0';
+        token[strcspn(token, "\t\n\r")] = '\0';
         check_type(df, index_rows, index_columns, token);
         if (df->data[index_rows][index_columns] == NULL)
             return (free(df->data[index_rows][index_columns]), false);
