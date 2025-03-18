@@ -42,23 +42,25 @@ void print_df(int rows, int col, void ***data, column_type_t type)
 int main(int ac, char **av)
 {
     dataframe_t *src = df_read_csv(av[1], ";");
-    dataframe_t *df = df_sort(src, "age", sort_func);
+    dataframe_t *df = df_tail(src, 100);
 
+    df_write_csv(df, "result.csv");
     if (df == NULL)
         return 84;
-    U_DEBUG("nb_columns= %d\n", df->nb_columns);
-    U_DEBUG("nb_rows= %d\n", df->nb_rows);
-    U_DEBUG_MSG("columns: ");
+    printf("nb_columns= %d\n", df->nb_columns);
+    printf("nb_rows= %d\n", df->nb_rows);
+#if defined(U_DEBUG_MODE)
+    printf("columns: ");
     for (int a = 0; a < df->nb_columns; a++)
         printf("[%s] [%s]%s", df->column_names[a],
             TYPES[df->column_type[a]].name,
             a < df->nb_columns - 1 ? ", " : "\n");
+#endif
     for (int rows = 0; rows < df->nb_rows; rows++) {
         for (int columns = 0; columns < df->nb_columns; columns++)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
-    df_write_csv(df, "result.csv");
     free(df);
     return 0;
 }
