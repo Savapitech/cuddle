@@ -67,6 +67,7 @@ int df_write_csv(dataframe_t *df, char const *path);
 dataframe_t *df_sort(dataframe_t *df, char const *column,
     bool (*sort_func)(void *vl1, void *vl2));
 dataframe_shape_t df_shape(dataframe_t *df);
+void df_free(dataframe_t *df);
 
 // Utils (will me moved to another header)
 char **my_str_to_word_array(const char *str, const char *separator);
