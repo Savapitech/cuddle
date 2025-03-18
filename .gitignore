@@ -43,3 +43,5 @@ unit_tests
 
 # AFL
 afl/generated
+
+result.csv

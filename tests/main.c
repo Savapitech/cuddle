@@ -41,7 +41,8 @@ void print_df(int rows, int col, void ***data, column_type_t type)
 
 int main(int ac, char **av)
 {
-    dataframe_t *df = df_read_csv(av[1], ",");
+    dataframe_t *src = df_read_csv(av[1], ";");
+    dataframe_t *df = df_sort(src, "age", sort_func);
 
     if (df == NULL)
         return 84;

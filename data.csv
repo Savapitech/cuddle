@@ -1,8 +1,0 @@
-name,age,city,boolean
-Alice,25,Paris,true
-Bob,30,London,true
-Charlie,35,Berlin,false
-Léo,25,Paris,True
-Nathan,30,London,FAlse
-Alex,35,Berlin,trUe
-Paul,25,Paris,falSe
