@@ -70,6 +70,6 @@ bool copy_data(dataframe_t *dst, dataframe_t *src, int nb_rows)
             return (free((void *)dst->data), false);
 #pragma GCC diagnostic pop
     }
-    dst->nb_rows = row + 1;
+    dst->nb_rows = row;
     return true;
 }
