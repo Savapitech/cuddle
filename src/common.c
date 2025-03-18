@@ -12,7 +12,7 @@
 const types_t TYPES[] = {
     { "bool", 0 },
     { "int", sizeof(int) },
-    { "uint", sizeof(uint32_t) },
+    { "unsigned int", sizeof(uint32_t) },
     { "float", sizeof(float) },
     { "string", 0 }
 };
