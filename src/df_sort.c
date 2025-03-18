@@ -10,8 +10,8 @@
 
 #include "dataframe.h"
 #include "copy_data.h"
+#include "utils.h"
 
-static
 int get_col_idx(dataframe_t *df, char const *name)
 {
     int i = 0;

@@ -14,4 +14,5 @@
 bool copy_columns_type(dataframe_t *dst, dataframe_t *src);
 bool copy_columns_name(dataframe_t *dst, dataframe_t *src);
 bool copy_data(dataframe_t *dst, dataframe_t *src, int nb_rows);
+bool copy_data_value(dataframe_t *dst, dataframe_t *src, int row);
 #endif

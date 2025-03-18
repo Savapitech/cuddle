@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 #include "dataframe.h"
-#include "debug.h"
+#include "utils.h"
 
 static
 int get_nb_columns(char **file, const char *separator)

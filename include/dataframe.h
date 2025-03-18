@@ -68,14 +68,4 @@ dataframe_t *df_sort(dataframe_t *df, char const *column,
     bool (*sort_func)(void *vl1, void *vl2));
 dataframe_shape_t df_shape(dataframe_t *df);
 void df_free(dataframe_t *df);
-
-// Utils (will me moved to another header)
-char **my_str_to_word_array(const char *str, const char *separator);
-void my_free_array(char **array);
-void free_data(void ***data, int nb_columns, int nb_rows);
-void *my_memdup(const uint8_t *mem, size_t bytes);
-bool data_storage(dataframe_t *dataframe, char **file, const char *separator);
-void mini_qsort(void ***arr, size_t size, int col,
-    bool compare(void *, void *));
-
 #endif /* !DATAFRAME_H_ */

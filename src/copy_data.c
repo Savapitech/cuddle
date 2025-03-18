@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "dataframe.h"
+#include "utils.h"
 
 __attribute__((nonnull))
 bool copy_columns_type(dataframe_t *dst, dataframe_t *src)
@@ -35,7 +36,6 @@ bool copy_columns_name(dataframe_t *dst, dataframe_t *src)
     return true;
 }
 
-static
 bool copy_data_value(dataframe_t *dst, dataframe_t *src, int row)
 {
     size_t sz;

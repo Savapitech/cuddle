@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "dataframe.h"
+#include "utils.h"
 
 static
 void check_is_string_or_bool(dataframe_t *df, int index_rows, int

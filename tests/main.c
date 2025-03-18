@@ -42,7 +42,7 @@ void print_df(int rows, int col, void ***data, column_type_t type)
 int main(int ac, char **av)
 {
     dataframe_t *src = df_read_csv(av[1], ";");
-    dataframe_t *df = df_tail(src, 100);
+    dataframe_t *df = df_tail(src, -10);
 
     df_write_csv(df, "result.csv");
     if (df == NULL)
@@ -61,6 +61,7 @@ int main(int ac, char **av)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
-    free(df);
+    df_free(src);
+    df_free(df);
     return 0;
 }
