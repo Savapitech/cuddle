@@ -68,4 +68,6 @@ dataframe_t *df_sort(dataframe_t *df, char const *column,
     bool (*sort_func)(void *vl1, void *vl2));
 dataframe_shape_t df_shape(dataframe_t *df);
 void df_free(dataframe_t *df);
+dataframe_t *df_filter(dataframe_t *df, const char *column,
+    bool (*filter_func)(void *vl));
 #endif /* !DATAFRAME_H_ */

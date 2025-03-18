@@ -17,6 +17,11 @@ bool sort_func(void *value1, void *value2)
     return *(int *) value1 > *(int *)value2;
 }
 
+bool filter_func(void *vl)
+{
+    return *(int *)vl > 30;
+}
+
 static
 void print_df(int rows, int col, void ***data, column_type_t type)
 {
@@ -42,9 +47,8 @@ void print_df(int rows, int col, void ***data, column_type_t type)
 int main(int ac, char **av)
 {
     dataframe_t *src = df_read_csv(av[1], ";");
-    dataframe_t *df = df_tail(src, -10);
+    dataframe_t *df = df_filter(src, "age", filter_func);
 
-    df_write_csv(df, "result.csv");
     if (df == NULL)
         return 84;
     printf("nb_columns= %d\n", df->nb_columns);
@@ -61,6 +65,7 @@ int main(int ac, char **av)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
+    df_write_csv(df, "result.csv");
     df_free(src);
     df_free(df);
     return 0;

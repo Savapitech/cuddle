@@ -36,17 +36,18 @@ bool copy_columns_name(dataframe_t *dst, dataframe_t *src)
     return true;
 }
 
-bool copy_data_value(dataframe_t *dst, dataframe_t *src, int row)
+bool copy_data_value(dataframe_t *dst, dataframe_t *src, int dst_row,
+    int src_row)
 {
     size_t sz;
 
     for (int col = 0; col < src->nb_columns; col++) {
         sz = TYPES[src->column_type[col]].sz ? TYPES[src->column_type[col]].sz
-            : strlen((char *)src->data[row][col]) + 1;
+            : strlen((char *)src->data[src_row][col]) + 1;
         if (!sz)
             return false;
-        dst->data[row][col] = my_memdup(src->data[row][col], sz);
-        if (dst->data[row][col] == NULL)
+        dst->data[dst_row][col] = my_memdup(src->data[src_row][col], sz);
+        if (dst->data[dst_row][col] == NULL)
             return false;
     }
     return true;
@@ -66,7 +67,7 @@ bool copy_data(dataframe_t *dst, dataframe_t *src, int nb_rows)
 #pragma GCC diagnostic ignored "-Wanalyzer-malloc-leak"
         if ((void *)dst->data[row] == NULL)
             return (free((void *)dst->data), false);
-        if (!copy_data_value(dst, src, row))
+        if (!copy_data_value(dst, src, row, row))
             return (free((void *)dst->data), false);
 #pragma GCC diagnostic pop
     }
