@@ -70,4 +70,5 @@ dataframe_shape_t df_shape(dataframe_t *df);
 void df_free(dataframe_t *df);
 dataframe_t *df_filter(dataframe_t *df, const char *column,
     bool (*filter_func)(void *vl));
+void *df_get_value(dataframe_t *df, int row, char const *column);
 #endif /* !DATAFRAME_H_ */
