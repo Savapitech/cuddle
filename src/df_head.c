@@ -15,7 +15,7 @@ dataframe_t *df_head(dataframe_t *df, int nb_rows)
 {
     dataframe_t *new_df;
 
-    if (!nb_rows || nb_rows > df->nb_rows)
+    if (!nb_rows)
         return NULL;
     new_df = malloc(sizeof *new_df);
     if (new_df == NULL)

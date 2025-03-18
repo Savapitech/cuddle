@@ -11,26 +11,25 @@
 #include "dataframe.h"
 #include "copy_data.h"
 
-dataframe_t *df_tail(dataframe_t *dataframe, int nb_rows)
+dataframe_t *df_tail(dataframe_t *df, int nb_rows)
 {
-    dataframe_t *new_dataframe;
-    dataframe_t *cpy_src_df = dataframe;
+    dataframe_t *new_df;
+    void ***copy_src_data = df->data;
 
-    if (!nb_rows || nb_rows > dataframe->nb_rows)
+    if (!nb_rows || nb_rows > df->nb_rows)
         return NULL;
-    new_dataframe = malloc(sizeof(dataframe_t));
-    if (new_dataframe == NULL)
+    new_df = malloc(sizeof(dataframe_t));
+    if (new_df == NULL)
         return NULL;
-    new_dataframe->nb_columns = dataframe->nb_columns;
-    new_dataframe->nb_rows = nb_rows;
-    dataframe->data += (dataframe->nb_rows - nb_rows);
-    if (!copy_columns_type(new_dataframe, dataframe) ||
-        !copy_columns_name(new_dataframe, dataframe) ||
-        !copy_data(new_dataframe, dataframe, nb_rows))
-        return (free(new_dataframe), NULL);
-    new_dataframe->separator = strdup(dataframe->separator);
-    if (new_dataframe->separator == NULL)
-        return (free(new_dataframe), NULL);
-    dataframe = cpy_src_df;
-    return new_dataframe;
+    new_df->nb_columns = df->nb_columns;
+    df->data += (df->nb_rows - nb_rows);
+    if (!copy_columns_type(new_df, df) ||
+        !copy_columns_name(new_df, df) ||
+        !copy_data(new_df, df, nb_rows))
+        return (free(new_df), NULL);
+    new_df->separator = strdup(df->separator);
+    if (new_df->separator == NULL)
+        return (free(new_df), NULL);
+    df->data = copy_src_data;
+    return new_df;
 }

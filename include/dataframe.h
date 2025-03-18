@@ -59,7 +59,7 @@ extern const types_t TYPES[];
 // Core
 dataframe_t *df_read_csv(const char *filename, const char *separator);
 dataframe_t *df_head(dataframe_t *df, int nb_rows);
-dataframe_t *df_tail(dataframe_t *dataframe, int nb_rows);
+dataframe_t *df_tail(dataframe_t *df, int nb_rows);
 void df_info(dataframe_t *dataframe);
 void df_describe(dataframe_t *df);
 int df_write_csv(dataframe_t *df, char const *path);
