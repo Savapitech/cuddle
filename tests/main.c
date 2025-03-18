@@ -22,6 +22,16 @@ bool filter_func(void *vl)
     return *(int *)vl > 30;
 }
 
+void *apply_func(void *value)
+{
+    int *new_value = malloc(sizeof(int));
+
+    if (new_value == NULL)
+        return NULL;
+    *new_value = *(int *)value * 2;
+    return new_value;
+}
+
 static
 void print_df(int rows, int col, void ***data, column_type_t type)
 {
@@ -47,10 +57,11 @@ void print_df(int rows, int col, void ***data, column_type_t type)
 int main(int ac, char **av)
 {
     dataframe_t *src = df_read_csv(av[1], ";");
-    dataframe_t *df = df_filter(src, "age", filter_func);
+    dataframe_t *df = df_apply(src, "age", apply_func);
 
     if (df == NULL)
         return 84;
+    df_write_csv(df, "result.csv");
     printf("nb_columns= %d\n", df->nb_columns);
     printf("nb_rows= %d\n", df->nb_rows);
 #if defined(U_DEBUG_MODE)
@@ -65,7 +76,6 @@ int main(int ac, char **av)
                 print_df(rows, columns, df->data, df->column_type[columns]);
         puts("");
     }
-    df_write_csv(df, "result.csv");
     df_free(src);
     df_free(df);
     return 0;

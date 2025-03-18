@@ -72,4 +72,6 @@ dataframe_t *df_filter(dataframe_t *df, const char *column,
     bool (*filter_func)(void *vl));
 void *df_get_value(dataframe_t *df, int row, char const *column);
 void **df_get_values(dataframe_t *df, char const *column);
+dataframe_t *df_apply(dataframe_t *df, const char *column,
+    void *(*apply_func)(void *vl));
 #endif /* !DATAFRAME_H_ */
