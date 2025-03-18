@@ -16,6 +16,7 @@
 
     #define WC(fd, str) write(fd, str, sizeof str - 1)
     #define IDX_OF(array, i, mem_s) (array + ((i) * (mem_s)))
+    #define ABS(v) (((v) < (0)) ? -(v) : (v))
 
 typedef enum {
     BOOL,
