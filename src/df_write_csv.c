@@ -40,7 +40,7 @@ void write_values(dataframe_t *df, FILE *file)
 
     for (int col = 0; col < df->nb_columns; col++)
         fprintf(file, "%s%s", df->column_names[col],
-            col < df->nb_columns - 1 ? "," : "\n");
+            col < df->nb_columns - 1 ? separator : "\n");
     for (int row = 0; row < df->nb_rows; row++) {
         for (int col = 0; col < df->nb_columns; col++) {
             write_value(df->data[row][col], file, df->column_type[col]);
