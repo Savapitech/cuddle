@@ -16,7 +16,7 @@ dataframe_t *df_tail(dataframe_t *df, int nb_rows)
     dataframe_t *new_df;
     void ***copy_src_data = df->data;
 
-    if (!nb_rows)
+    if (nb_rows < 0)
         return NULL;
     new_df = malloc(sizeof(dataframe_t));
     if (new_df == NULL)
