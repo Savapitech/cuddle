@@ -19,6 +19,14 @@ typedef struct {
     void *(*apply_func)(void *vl);
 } apply_data_t;
 
+typedef struct {
+    dataframe_t *dst;
+    dataframe_t *src;
+    int col_idx;
+    int row;
+    column_type_t downcast;
+} type_data_t;
+
 bool copy_columns_type(dataframe_t *dst, dataframe_t *src);
 bool copy_columns_name(dataframe_t *dst, dataframe_t *src);
 bool copy_data(dataframe_t *dst, dataframe_t *src, int nb_rows);
