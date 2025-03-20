@@ -32,7 +32,7 @@ void check_is_int_ot_uint(dataframe_t *df, int index_rows, int
     index_columns, char *token)
 {
     int check_point = 0;
-    union { int nb; uint32_t u_nb; float f_nb; } value;
+    union { long nb; uint32_t u_nb; float f_nb; } value;
 
     for (int a = 0; token[a] != '\0'; a++) {
         if (token[a] == '.')
@@ -46,8 +46,8 @@ void check_is_int_ot_uint(dataframe_t *df, int index_rows, int
         df->data[index_rows][index_columns] =
             my_memdup((uint8_t const *)&value.f_nb, sizeof(float));
     } else {
-        value.nb = strtoul(token, NULL, 10);
-        df->column_type[index_columns] = UINT;
+        value.nb = strtol(token, NULL, 10);
+        df->column_type[index_columns] = value.nb < 0 ? INT : UINT;
         df->data[index_rows][index_columns] =
             my_memdup((uint8_t const *)&value.nb, sizeof(uint32_t));
     }
