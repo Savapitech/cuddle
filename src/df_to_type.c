@@ -119,7 +119,7 @@ void *to_bool(void *src, column_type_t src_type)
     int is_true = 0;
 
     if (src_type == STRING)
-        is_true = (strlen((char *)src) > 0);
+        is_true = strcasecmp((char *)src, "true") == 0 ? 1 : 0;
     if (src_type == INT)
         is_true = (*(int *)src != 0);
     if (src_type == UINT)
