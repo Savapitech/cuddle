@@ -62,9 +62,20 @@ endef
 $(eval $(call mk-profile, release, SRC, , $(BIN_NAME), 0))
 $(eval $(call mk-profile, debug, SRC, -D U_DEBUG_MODE -g3, libcuddle_debug.a, \
 	0))
-$(eval $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3, test, 1))
+$(eval $(call mk-profile, test, SRC, -D U_DEBUG_MODE -g3 --coverage, test, 1))
 
 all: $(NAME_release)
+
+.PHONY: tests_run
+tests_run: $(NAME_test)
+	./test tests/type.csv
+
+.PHONY: cov
+cov: tests_run
+	gcovr . \
+		--gcov-ignore-errors=no_working_dir_found \
+		--exclude-unreachable-branches \
+		--exclude tests
 
 clean:
 	@ $(RM) $(OBJ)
