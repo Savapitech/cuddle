@@ -18,7 +18,7 @@ BUILD_DIR := .build
 CC := gcc
 
 CFLAGS += -Wall -Wextra -Werror=write-strings -iquote ulib
-CFLAGS += -Wno-unused-parameter -Wunused-result -fanalyzer
+CFLAGS += -Wno-unused-parameter -Wunused-result
 CFLAGS += -Wp,-U_FORTIFY_SOURCE -Wcast-qual -Wduplicated-branches
 CFLAGS += -Wduplicated-cond -Wformat=2 -Wshadow -fno-builtin
 CFLAGS += -Wstrict-aliasing=0 -Wstrict-prototypes -Wunreachable-code

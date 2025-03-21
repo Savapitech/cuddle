@@ -34,8 +34,6 @@ bool copy_col_values(apply_data_t *d)
     return true;
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wanalyzer-malloc-leak"
 static
 dataframe_t *apply_copy_data(dataframe_t *dst, dataframe_t *src,
     void *(*apply_func)(void *vl), int col_idx)
@@ -55,7 +53,6 @@ dataframe_t *apply_copy_data(dataframe_t *dst, dataframe_t *src,
     dst->nb_rows = src->nb_rows;
     return dst;
 }
-#pragma GCC diagnostic pop
 
 dataframe_t *df_apply(dataframe_t *df, const char *column,
     void *(*apply_func)(void *vl))

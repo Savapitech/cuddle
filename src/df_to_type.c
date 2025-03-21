@@ -175,8 +175,6 @@ bool copy_col_values(type_data_t *d)
     return true;
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wanalyzer-malloc-leak"
 static
 dataframe_t *type_copy_data(dataframe_t *dst, dataframe_t *src,
     column_type_t downcast, int col_idx)
@@ -199,7 +197,6 @@ dataframe_t *type_copy_data(dataframe_t *dst, dataframe_t *src,
     dst->column_type[col_idx] = downcast;
     return dst;
 }
-#pragma GCC diagnostic pop
 
 dataframe_t *df_to_type(dataframe_t *df, char const *column,
     column_type_t downcast)

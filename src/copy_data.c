@@ -63,13 +63,10 @@ bool copy_data(dataframe_t *dst, dataframe_t *src, int nb_rows)
         return false;
     for (; row < nb_rows && row < src->nb_rows; row++) {
         dst->data[row] = (void **)malloc(sizeof(void *) * src->nb_columns);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wanalyzer-malloc-leak"
         if ((void *)dst->data[row] == NULL)
             return (free((void *)dst->data), false);
         if (!copy_data_value(dst, src, row, row))
             return (free((void *)dst->data), false);
-#pragma GCC diagnostic pop
     }
     dst->nb_rows = row;
     return true;

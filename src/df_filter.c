@@ -39,8 +39,6 @@ dataframe_t *filter_copy_data(dataframe_t *dst, dataframe_t *src,
             continue;
         if (!handle_rows_cap(dst, &rows_cap, copied_rows))
             return NULL;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wanalyzer-malloc-leak"
         dst->data[copied_rows] = (void **)malloc(sizeof(void *) *
             src->nb_columns);
         if ((void *)dst->data[copied_rows] == NULL)
@@ -52,7 +50,6 @@ dataframe_t *filter_copy_data(dataframe_t *dst, dataframe_t *src,
     dst->nb_rows = copied_rows;
     return dst;
 }
-#pragma GCC diagnostic pop
 
 dataframe_t *df_filter(dataframe_t *df, const char *column,
     bool (*filter_func)(void *vl))
