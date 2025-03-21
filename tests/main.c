@@ -66,6 +66,7 @@ int main(int ac, char **av)
     if (df == NULL)
         return 84;
     df_write_csv(df, "result.csv");
+    df_write_json(df, "result.json");
     printf("nb_columns= %d\n", df->nb_columns);
     printf("nb_rows= %d\n", df->nb_rows);
     df_info(df);

@@ -76,4 +76,5 @@ dataframe_t *df_apply(dataframe_t *df, const char *column,
     void *(*apply_func)(void *vl));
 dataframe_t *df_to_type(dataframe_t *df, char const *column,
     column_type_t downcast);
+int df_write_json(dataframe_t *df, char const *path);
 #endif /* !DATAFRAME_H_ */
