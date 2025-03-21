@@ -77,4 +77,5 @@ dataframe_t *df_apply(dataframe_t *df, const char *column,
 dataframe_t *df_to_type(dataframe_t *df, char const *column,
     column_type_t downcast);
 int df_write_json(dataframe_t *df, char const *path);
+void **df_get_unique_values(dataframe_t *df, char const *column);
 #endif /* !DATAFRAME_H_ */
